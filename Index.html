@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare AI - Deteksi Dini Burnout Mahasiswa Kedokteran</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS RESET & VARIABLES */
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --secondary: #0ea5e9;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .btn-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            transition: background 0.3s !important;
+        }
+
+        .btn-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        /* HERO SECTION */
+        header {
+            padding: 8rem 5% 4rem 5%;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            display: flex;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-text h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hero-text h1 span {
+            color: var(--primary);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--danger);
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .stat-card p {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
+
+        .hero-mockup {
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mockup-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 8px solid var(--dark);
+        }
+
+        /* FLOWCHART & FEATURES SECTION */
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+        }
+
+        .section-title p {
+            color: var(--gray);
+        }
+
+        #features {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .flow-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .flow-step {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 80px 1fr 250px;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+
+        .flow-step:hover {
+            transform: translateX(10px);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #e0f2fe;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .step-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .step-content p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .feature-tag {
+            background: #f0fdf4;
+            color: var(--success);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            border: 1px dashed var(--success);
+        }
+
+        .feature-tag.ai {
+            background: #eff6ff;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* SIMULATOR/APP INTERACTIVE SECTION */
+        #simulator {
+            padding: 5rem 5%;
+            background: #f1f5f9;
+        }
+
+        .simulator-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .quiz-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid #e2e8f0;
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+
+        .option-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        /* RESULT SIMULATION */
+        .result-box {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-status {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        footer p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        /* RESPONSIVE DESIGN (MEDIA QUERIES) */
+        @media (max-width: 968px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-stats {
+                justify-content: center;
+            }
+            .flow-step {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+            }
+            .nav-links {
+                display: none; /* Sederhana untuk prototype */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-brain"></i> MindCare AI
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#features">Alur & Fitur</a></li>
+            <li><a href="#simulator" class="btn-cta">Coba Simulator</a></li>
+        </ul>
+    </nav>
+
+    <header id="home">
+        <div class="hero-container">
+            <div class="hero-text">
+                <h1>Transformasi Digital Cegah <span>Academic Burnout</span> Mahasiswa FK</h1>
+                <p>MindCare AI adalah platform inovatif berbasis Artificial Intelligence untuk mendeteksi dini sindrom burnout secara objektif, proaktif, dan personal sebelum berlanjut menjadi krisis akademik.</p>
+                <a href="#simulator" class="btn-submit" style="text-decoration:none; display:inline-block; width:auto; padding: 0.8rem 2rem;">Mulai Screening AI</a>
+                
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <h3>93.1%</h3>
+                        <p>Kelelahan Emosional</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>97.2%</h3>
+                        <p>Sinisme Tinggi</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>37.2%</h3>
+                        <p>Rata-rata global</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-mockup">
+                <div class="mockup-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem; align-items:center;">
+                        <span style="font-weight:700;"><i class="fa-solid fa-heart-pulse text-danger"></i> Live Tracker</span>
+                        <span style="font-size:0.8rem; background:#f1f5f9; padding:2px 8px; border-radius:20px;">Ensemble Learning</span>
+                    </div>
+                    <div style="background:#f8fafc; padding:1rem; border-radius:12px; margin-bottom:1rem; border-left:4px solid var(--warning);">
+                        <p style="font-size:0.8rem; font-weight:600; margin-bottom:5px;">Kualitas Tidur (Minggu ini)</p>
+                        <h4 style="color:var(--warning);"><i class="fa-solid fa-bed"></i> Penurunan 25%</h4>
+                        <p style="font-size:0.75rem; color:var(--gray);">Korelasi tinggi dengan jadwal ujian anatomi terdeteksi.</p>
+                    </div>
+                    <div style="background:#f8fafc; padding:1rem; border-radius:12px; border-left:4px solid var(--success);">
+                        <p style="font-size:0.8rem; font-weight:600; margin-bottom:5px;">Analisis Linguistik NLP</p>
+                        <h4 style="color:var(--success);"><i class="fa-solid fa-face-smile"></i> Stabil</h4>
+                        <p style="font-size:0.75rem; color:var(--gray);">Esai reflektif menunjukkan sentimen netral-positif.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features">
+        <div class="section-title">
+            <h2>Alur Penggunaan & Fitur Platform</h2>
+            <p>Integrasi cerdas langkah demi langkah demi menjaga kesehatan mental secara proaktif.</p>
+        </div>
+
+        <div class="flow-container">
+            <div class="flow-step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Registrasi dan Self-Assessment Awal</h3>
+                    <p>Mahasiswa melakukan pendaftaran aman dan mengisi data awal terkait tingkat stres akademik, pola tidur, dan kelelahan emosional.</p>
+                </div>
+                <div class="feature-tag">Burnout Screening Feature</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Analisis Kondisi Mental Berbasis AI</h3>
+                    <p>Menggunakan Natural Language Processing (NLP) dan machine learning untuk mengekstrak data aktivitas dan melacak tingkat volatilitas performa secara real-time.</p>
+                </div>
+                <div class="feature-tag ai"><i class="fa-solid fa-robot"></i> AI-Based Analysis</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Hasil Screening & Rekomendasi Personal</h3>
+                    <p>Sistem mengeluarkan hasil kalkulasi berupa tingkat risiko burnout lengkap dengan saran preventif otomatis yang adaptif dan efisien (ROI-Focused).</p>
+                </div>
+                <div class="feature-tag">Personalized Recommendation</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Akses Konsultasi Profesional</h3>
+                    <p>Bila algoritma mendeteksi risiko sedang hingga kritis, sistem secara otomatis menyediakan akses cepat ke psikolog, konselor, atau layanan kesehatan mental kampus.</p>
+                </div>
+                <div class="feature-tag">Professional Counseling</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">05</div>
+                <div class="step-content">
+                    <h3>Monitoring dan Pendampingan Berkala</h3>
+                    <p>Pemantauan berkelanjutan (seperti Sleep Tracker harian) guna mencegah penurunan efikasi diri akademik mahasiswa kedokteran jangka panjang.</p>
+                </div>
+                <div class="feature-tag">Mental Health Monitoring</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="simulator">
+        <div class="section-title">
+            <h2>Simulator AI MindCare</h2>
+            <p>Cobalah simulasi screening di bawah ini untuk melihat bagaimana sistem AI bekerja memberikan hasil deteksi dini.</p>
+        </div>
+
+        <div class="simulator-container">
+            <form id="burnoutForm" onsubmit="calculateBurnout(event)">
+                <div class="quiz-group">
+                    <label>1. Seberapa sering Anda merasa kelelahan emosional setelah beraktivitas kuliah di FK?</label>
+                    <div class="options-grid" data-question="q1">
+                        <div class="option-btn" onclick="selectOption(this, 1)">Jarang</div>
+                        <div class="option-btn" onclick="selectOption(this, 2)">Kadang</div>
+                        <div class="option-btn" onclick="selectOption(this, 3)">Sering</div>
+                        <div class="option-btn" onclick="selectOption(this, 4)">Selalu</div>
+                    </div>
+                </div>
+
+                <div class="quiz-group">
+                    <label>2. Bagaimana kualitas/durasi tidur Anda dalam satu minggu terakhir?</label>
+                    <div class="options-grid" data-question="q2">
+                        <div class="option-btn" onclick="selectOption(this, 1)">Sangat Baik</div>
+                        <div class="option-btn" onclick="selectOption(this, 2)">Cukup</div>
+                        <div class="option-btn" onclick="selectOption(this, 3)">Buruk</div>
+                        <div class="option-btn" onclick="selectOption(this, 4)">Sangat Buruk</div>
+                    </div>
+                </div>
+
+                <div class="quiz-group">
+                    <label>3. Apakah Anda merasa sinisme terhadap tugas akademis atau merasa efikasi diri menurun?</label>
+                    <div class="options-grid" data-question="q3">
+                        <div class="option-btn" onclick="selectOption(this, 1)">Tidak</div>
+                        <div class="option-btn" onclick="selectOption(this, 2)">Sedikit</div>
+                        <div class="option-btn" onclick="selectOption(this, 3)">Ya, Terasa</div>
+                        <div class="option-btn" onclick="selectOption(this, 4)">Sangat Sangat Ya</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Analisis dengan MindCare AI</button>
+            </form>
+
+            <div id="result" class="result-box">
+                <div class="result-status" id="resultStatus">Status</div>
+                <p id="resultDesc" style="margin-bottom: 15px;">Deskripsi analisis...</p>
+                <div style="font-weight: bold; font-size: 0.9rem;" id="resultAction">Rekomendasi tindakan...</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <h3>MindCare AI</h3>
+        <p>Inovasi Platform Digital Berbasis Artificial Intelligence untuk Deteksi Dini Burnout pada Mahasiswa Kedokteran</p>
+        <p>&copy; 2026 Proposal Esai Mahasiswa Kedokteran. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Objek untuk menyimpan jawaban kuesioner simulasi
+        const answers = { q1: 0, q2: 0, q3: 0 };
+
+        function selectOption(element, value) {
+            // Ambil grup pertanyaan
+            const parent = element.parentElement;
+            const questionKey = parent.getAttribute('data-question');
+            
+            // Hapus kelas 'selected' dari semua tombol di grup tersebut
+            const buttons = parent.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Tambahkan kelas 'selected' ke tombol yang diklik
+            element.classList.add('selected');
+            
+            // Simpan nilai jawaban
+            answers[questionKey] = value;
+        }
+
+        function calculateBurnout(event) {
+            event.preventDefault();
+            
+            // Validasi apakah semua pertanyaan sudah dijawab
+            if (answers.q1 === 0 || answers.q2 === 0 || answers.q3 === 0) {
+                alert("Mohon jawab semua pertanyaan simulasi terlebih dahulu!");
+                return;
+            }
+
+            const totalScore = answers.q1 + answers.q2 + answers.q3;
+            const resultDiv = document.getElementById('result');
+            const statusH = document.getElementById('resultStatus');
+            const descP = document.getElementById('resultDesc');
+            const actionDiv = document.getElementById('resultAction');
+
+            resultDiv.style.display = 'block';
+
+            // Logika klasifikasi risiko burnout sederhana (Mensimulasikan kerja Ensemble Learning AI)
+            if (totalScore <= 5) {
+                resultDiv.style.backgroundColor = '#f0fdf4';
+                resultDiv.style.border = '2px solid #bbf7d0';
+                statusH.style.color = 'var(--success)';
+                statusH.innerText = "Risiko Rendah (Aman)";
+                descP.innerText = "AI mendeteksi kondisi psikologis dan efikasi akademik Anda berada dalam tingkat yang stabil dan sehat.";
+                actionDiv.innerHTML = "<span style='color:var(--success);'><i class='fa-solid fa-circle-check'></i> Rekomendasi: Pertahankan pola tidur & ikuti kegiatan MindCare Mood Tracker mingguan.</span>";
+            } else if (totalScore <= 9) {
+                resultDiv.style.backgroundColor = '#fef9c3';
+                resultDiv.style.border = '2px solid #fef08a';
+                statusH.style.color = 'var(--warning)';
+                statusH.innerText = "Risiko Sedang (Fase Nasien)";
+                descP.innerText = "AI menemukan pola subtle dari indikasi kelelahan emosional awal dan volatilitas performa tidur.";
+                actionDiv.innerHTML = "<span style='color:var(--dark);'><i class='fa-solid fa-triangle-exertion'></i> Rekomendasi: Gunakan fitur AI Personalized Recommendation untuk tips manajemen stres akademis otomatis.</span>";
+            } else {
+                resultDiv.style.backgroundColor = '#fee2e2';
+                resultDiv.style.border = '2px solid #fecaca';
+                statusH.style.color = 'var(--danger)';
+                statusH.innerText = "Risiko Kritis / Burnout Parah";
+                descP.innerText = "Sistem mendeteksi tingkat volatilitas emosi kritis, sinisme tinggi, dan penurunan efikasi diri yang drastis.";
+                actionDiv.innerHTML = "<span style='color:var(--danger);'><i class='fa-solid fa-circle-exclamation'></i> Tindakan Proaktif: Sistem secara otomatis membukakan akses fitur Professional Counseling ke layanan psikolog kampus.</span>";
+            }
+
+            // Scroll otomatis ke kotak hasil analisis
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
